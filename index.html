@@ -1,0 +1,168 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermetic Yellow - Taxi Service in Faro, Portugal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body class="font-sans bg-gray-100 text-gray-800">
+  <!-- Header -->
+  <header class="bg-gray-800 text-white sticky top-0 z-10">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fas fa-taxi text-yellow-400 text-2xl"></i>
+        <h1 class="text-xl font-bold">Hermetic Yellow</h1>
+      </div>
+      <nav>
+        <ul class="flex space-x-4">
+          <li><a href="#home" class="hover:text-yellow-400">Home</a></li>
+          <li><a href="#about" class="hover:text-yellow-400">About</a></li>
+          <li><a href="#contact" class="hover:text-yellow-400">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section id="home" class="bg-cover bg-center h-screen flex items-center" style="background-image: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')">
+    <div class="container mx-auto px-4 text-center text-white bg-gray-800 bg-opacity-50 py-10 rounded-lg">
+      <h2 class="text-4xl md:text-5xl font-bold mb-4">Hermetic Yellow Taxis</h2>
+      <p class="text-lg md:text-xl mb-6">Your reliable ride in Faro, Portugal</p>
+      <a href="https://wa.me/+351936217758?call" target="_blank" class="bg-yellow-400 text-gray-800 px-8 py-4 rounded-full font-semibold text-lg hover:bg-yellow-500">Call Now</a>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about" class="py-16 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')">
+    <div class="bg-gray-800 bg-opacity-50 py-10">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8 text-white">About Hermetic Yellow</h2>
+        <div class="flex flex-col md:flex-row items-center space-y-6 md:space-y-0 md:space-x-8">
+          <div class="md:w-1/2">
+            <p class="text-lg mb-4 text-white">Hermetic Yellow is your trusted taxi service in Faro, Portugal. We offer affordable, convenient, and reliable rides to get you where you need to go. Whether it's a quick trip to the airport or a scenic tour, our professional drivers ensure a comfortable experience.</p>
+          </div>
+          <div class="md:w-1/2">
+            <img src="https://images.unsplash.com/photo-1528731708534-816fe59f90cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Hermetic Yellow Taxi Ride" class="w-full rounded-lg shadow-lg">
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact" class="bg-cover bg-center py-16" style="background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')">
+    <div class="bg-gray-800 bg-opacity-50 py-10">
+      <div class="container mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-8 text-white">Get in Touch</h2>
+        <div class="max-w-lg mx-auto text-center space-y-4">
+          <p><i class="fas fa-phone mr-2 text-white"></i> <a href="tel:+351936217758" class="hover:text-yellow-400 text-white">+351 936 217 758</a></p>
+          <p><i class="fas fa-envelope mr-2 text-white"></i> <a href="mailto:info@hermeticyellow.com" class="hover:text-yellow-400 text-white">info@hermeticyellow.com</a></p>
+          <a href="https://wa.me/+351936217758?text=Hi%20Hermetic%20Yellow,%20I'd%20like%20to%20book%20a%20taxi%20or%20ask%20about%20your%20services." target="_blank" class="inline-block bg-yellow-400 text-gray-800 px-8 py-4 rounded-full font-semibold text-lg hover:bg-yellow-500">Message on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer Services Section -->
+  <footer class="bg-blue-900 text-white py-12">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-8">Efficient Urban Taxi Services</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+        <div class="bg-white bg-opacity-10 p-4 rounded-lg text-center">
+          <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Rapid Airport Transfers" class="w-full h-40 object-cover rounded-t-lg">
+          <h3 class="text-xl font-semibold mt-2">Rapid Airport Transfers</h3>
+          <p class="mt-2">Quick and efficient transfers to and from Faro Airport, ensuring you're on time for every flight.</p>
+        </div>
+        <!-- Card 2 -->
+        <div class="bg-white bg-opacity-10 p-4 rounded-lg text-center">
+          <img src="https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Citywide Taxi Services" class="w-full h-40 object-cover rounded-t-lg">
+          <h3 class="text-xl font-semibold mt-2">Citywide Taxi Services</h3>
+          <p class="mt-2">Reliable taxi services across Faro, offering convenient transport any time of the day.</p>
+        </div>
+        <!-- Card 3 -->
+        <div class="bg-white bg-opacity-10 p-4 rounded-lg text-center">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Executive Car Hire" class="w-full h-40 object-cover rounded-t-lg">
+          <h3 class="text-xl font-semibold mt-2">Executive Car Hire</h3>
+          <p class="mt-2">Premium service for business travelers seeking comfort and elegance during their stay in Faro.</p>
+        </div>
+        <!-- Card 4 -->
+        <div class="bg-white bg-opacity-10 p-4 rounded-lg text-center">
+          <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="24/7 Ride Availability" class="w-full h-40 object-cover rounded-t-lg">
+          <h3 class="text-xl font-semibold mt-2">24/7 Ride Availability</h3>
+          <p class="mt-2">Round-the-clock service for urgent or night-time travel needs within the city.</p>
+        </div>
+        <!-- Card 5 -->
+        <div class="bg-white bg-opacity-10 p-4 rounded-lg text-center">
+          <img src="https://images.unsplash.com/photo-1518806118471-f28b20a1d79d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Tourist Site Drop-offs" class="w-full h-40 object-cover rounded-t-lg">
+          <h3 class="text-xl font-semibold mt-2">Tourist Site Drop-offs</h3>
+          <p class="mt-2">Explore Faro's attractions with easy drop-offs at popular tourist destinations throughout the day.</p>
+        </div>
+        <!-- Card 6 -->
+        <div class="bg-white bg-opacity-10 p-4 rounded-lg text-center">
+          <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Family-Friendly Transport" class="w-full h-40 object-cover rounded-t-lg">
+          <h3 class="text-xl font-semibold mt-2">Family-Friendly Transport</h3>
+          <p class="mt-2">Safe and spacious vehicles ideal for family trips, with child seats upon request.</p>
+        </div>
+      </div>
+    </div>
+    <!-- Footer Copyright -->
+    <div class="bg-gray-800 text-center py-4 mt-8">
+      <p>© 2025 Hermetic Yellow. Based in Faro, Portugal.</p>
+    </div>
+  </footer>
+
+  <!-- Smooth Scroll JavaScript -->
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({
+          behavior: 'smooth'
+        });
+      });
+    });
+  </script>
+</body>
+</html>
